@@ -1,14 +1,11 @@
 # Examples (rama `example`)
 
-Esta rama es la del **formador**. Tiene:
+Si quieres mirar más allá de lo que escribes en `main`, aquí hay escenarios extra. El proyecto de cada lab, ya cerrado, está en `src/test/java/features/`.
 
-- `src/test/java/features/` — lo que el alumno construye en `main` (ya terminado, en verde)
-- `src/test/java/examples/` — material extra para la demostración guiada, si el grupo va rápido o hay que mostrar un matiz
+Tu trabajo está en **`main`**. El Codespace del curso lo creas desde ahí.
 
-No es la rama del fork del alumno. El Codespace de clase se crea desde **`main`**.
-
-| Fichero | Qué enseña |
-|---------|------------|
+| Fichero | Qué vas a ver |
+|---------|---------------|
 | `m02-expresiones.feature` | `#regex`, `assert`, funciones JS de más de una línea |
 | `m03-cabeceras.feature` | `header` / `headers` en un GET |
 | `m04-predicados.feature` | `#? _ > 0` sobre números |

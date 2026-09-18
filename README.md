@@ -1,14 +1,14 @@
 # Automatización de pruebas con Karate — rama `example`
 
-Esta rama es la del **formador**: features de los labs **terminados** + `src/test/java/examples/` para las demostraciones.
+Si te quedas pillado, aquí tienes el **mismo proyecto ya montado**, para contrastar. Tú construyes el tuyo en **`main`**: ahí escribes el pom, el runner y los features.
 
-El alumno trabaja en **`main`**. No crees el Codespace de clase aquí.
+Abre el Codespace del curso desde `main` de **tu fork**, no desde esta rama.
 
 | Qué | Dónde |
 |-----|--------|
-| Labs resueltos | `src/test/java/features/` |
-| Extra de demo | [`src/test/java/examples/`](src/test/java/examples/README.md) |
-| Rama de trabajo | [`main`](https://github.com/my-it-labs/karate-api-101/tree/main) |
+| Features de cada módulo | `src/test/java/features/` |
+| Más escenarios para mirar | [`src/test/java/examples/`](src/test/java/examples/README.md) |
+| Tu espacio de trabajo | [`main`](https://github.com/my-it-labs/karate-api-101/tree/main) |
 
 ```bash
 mvn test

@@ -1,5 +1,6 @@
 # Arnés del agente y diseño (no subir al remoto público)
 .agent/
+.cursor/
 
 # Legacy: por si existían en versiones anteriores
 AGENTS.md
