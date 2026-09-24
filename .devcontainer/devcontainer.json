@@ -8,7 +8,7 @@
       "mavenVersion": "3.9.9"
     }
   },
-  "postCreateCommand": "mvn -q -DskipTests dependency:go-offline test-compile",
+  "postCreateCommand": "java -version && mvn -version",
   "customizations": {
     "vscode": {
       "extensions": [

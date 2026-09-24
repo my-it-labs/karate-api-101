@@ -69,6 +69,10 @@ Feature: Mock de la API de tienda (laboratorio local)
     * def responseStatus = 204
     * def response = ''
 
+  Scenario: pathMatches('/eco') && methodIs('get')
+    * def curso = requestHeaders['x-curso'] ? requestHeaders['x-curso'][0] : ''
+    * def response = { eco: '#(curso)' }
+
   Scenario: pathMatches('/usuarios/{id}') && methodIs('get')
     * def id = parseInt(pathParams.id)
     * def matches = karate.filter(usuarios, function(x){ return x.id == id })

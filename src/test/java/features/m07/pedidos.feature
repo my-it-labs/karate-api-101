@@ -20,3 +20,10 @@ Feature: Arrancar un mock propio con karate.start
     Then status 201
     And match response.id == '88'
     And match response.estado == 'creado'
+
+  Scenario: POST sin cantidad
+    Given path 'pedidos'
+    And request { productoId: 1 }
+    When method post
+    Then status 400
+    And match response.mensaje == 'cantidad obligatoria'

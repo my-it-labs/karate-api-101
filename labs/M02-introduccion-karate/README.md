@@ -1,45 +1,40 @@
 # M02 — Introducción a Karate
 
-[← Página anterior](../M01-entorno-codespace/M01-01-codespace-y-humo.md) · [Siguiente página →](M02-01-dsl-variables-match.md)
+[← Página anterior](../M01-entorno-codespace/M01-02-config-y-humo.md) · [Siguiente página →](M02-01-dsl-variables-match.md)
 
 > [!NOTE]
-> **Cómo funciona este módulo.** Primero la **teoría**, luego la **demostración guiada** del formador, y después **practicas tú** en el laboratorio.
+> Primero ves el DSL (variables y `match`). En el laboratorio creas tú el feature, sin HTTP.
 
-## Qué aprenderás
+## Qué vas a hacer
 
-- Anatomía de un `.feature`: `Feature`, `Background`, `Scenario`.
-- Variables (`def`), JSON embebido y `match`.
-- Cómo limitar la ejecución con tags.
+- Escribir un `.feature` con `Feature`, `Background` y `Scenario`.
+- Usar `def`, JSON embebido y `match`.
+- Ejecutar solo este módulo con un tag.
 
-## Teoría
+## El DSL
 
-Karate reutiliza Gherkin, pero **no es Cucumber clásico**: las steps no las implementas en Java. El propio motor interpreta `def`, `match`, `url`, `method`.
+Karate usa Gherkin, pero **no es Cucumber clásico**: no implementas los pasos en Java. El motor entiende `def`, `match`, `url`, `method`.
 
-| Concepto | Qué es | Qué no es |
-|----------|--------|-----------|
-| `Feature` | Fichero de escenarios | Una clase Java de producción |
-| `Background` | Se ejecuta antes de cada Scenario | Un `BeforeAll` global del suite |
-| `def` | Asigna una variable | Un tipo estático |
-| `match` | Aserción (igualdad, tipos, `contains`) | Un `print` de depuración |
-| tag `@m02` | Filtro de ejecución | Documentación opcional |
+| Lo que escribes | Qué hace |
+|-----------------|----------|
+| `Feature` | El fichero de escenarios |
+| `Background` | Se ejecuta antes de **cada** Scenario de ese fichero |
+| `def` | Deja una variable lista |
+| `match` | Aserción (valor, tipo, `contains`) |
+| tag `@m02` | Filtro: `mvn test -Dkarate.options="--tags @m02"` |
 
-`match x == '#string'` no compara el texto `"#string"`: es un **marcador de tipo**. `'#[2]'` significa «array de dos elementos».
+`match x == '#string'` no busca el texto `"#string"`: es un **marcador de tipo**. `'#[2]'` quiere decir «array de dos elementos».
 
-En este módulo **no hay HTTP**. Sirve para coger el DSL antes de mezclarlo con `method get`.
+Aquí **no hay HTTP**. Primero coges el lenguaje; los GET vienen en M03.
 
-## Demostración guiada
+## Cómo encaja
 
-> Recorrido que hace el formador en vivo. Tono descriptivo, sin imperativos.
+En tu feature, el `Background` dejará `iva` y una función `conIva`. Un Scenario declarará string, número, array y objeto y los comprobará con `match`. Otro llamará a `conIva(100)` y esperará `121`. Con `--tags @m02` solo correrá este fichero.
 
-1. Al abrir `src/test/java/features/m02/dsl.feature` se ve un `Background` con `iva` y una función `conIva`.
-2. El primer Scenario declara un string, un número, un array y un objeto. Cada `match` comprueba valor o tipo.
-3. El segundo Scenario llama a `conIva(100)` y espera `121`.
-4. `mvn test -Dkarate.options="--tags @m02"` corre solo este feature. El informe muestra dos escenarios en verde.
+## Ahora te toca a ti
 
-## Ahora practica tú
-
-| Lab | Título | Qué harás |
-|-----|--------|-----------|
-| M02-01 | [DSL, variables y match](M02-01-dsl-variables-match.md) | Ejecutar el feature, romper un match y ampliarlo |
+| Lab | Título | Qué vas a montar |
+|-----|--------|------------------|
+| M02-01 | [DSL, variables y match](M02-01-dsl-variables-match.md) | Crear `dsl.feature` desde cero |
 
 → Empieza por **[M02-01 — DSL, variables y match](M02-01-dsl-variables-match.md)**.

@@ -2,11 +2,11 @@
 
 [← Página anterior](README.md) · [Siguiente página →](../M06-data-driven/README.md)
 
-> Práctica del módulo. La teoría y la demo están en el [README del módulo](README.md).
+> El concepto está en el [README del módulo](README.md). Aquí lo montas tú.
 
 ### Objetivo
 
-Reutilizar un GET con `call` y no duplicar el `url` / `path`.
+Vas a reutilizar un GET con `call` sin duplicar `url` / `path`.
 
 ### Prerrequisitos
 
@@ -14,70 +14,100 @@ Reutilizar un GET con `call` y no duplicar el `url` / `path`.
 
 ### En qué consiste
 
-Ejecutas `call.feature` y creas un helper para usuarios.
+Vas a crear el helper y el feature que lo llama.
 
-### 1 — Correr call
+### 1 — Helper
 
-**Acción:**
+**Acción:** Crea `src/test/java/features/helpers/get-producto.feature` y pega esto:
+
+```gherkin
+@ignore
+Feature: Helper — obtener un producto por id
+
+  Scenario:
+    Given url baseUrl
+    And path 'productos', id
+    When method get
+    Then status 200
+```
+
+`@ignore` evita que el suite lo lance solo. `id` no está escrito aquí: lo recibirá el `call`. Sin `@ignore`, Karate intenta ejecutarlo y `id` no existe.
+
+**Resultado esperado:** el fichero existe. `mvn test` no lo cuenta como test.
+
+### 2 — call.feature
+
+**Acción:** Crea `src/test/java/features/m05/call.feature` y pega esto:
+
+```gherkin
+@m05
+Feature: Reutilizar un escenario con call
+
+  Scenario: call pasa el id y devuelve la respuesta
+    * def llamado = call read('classpath:features/helpers/get-producto.feature') { id: 2 }
+    * match llamado.response.nombre == 'Monitor'
+    * match llamado.response.id == 2
+
+  Scenario: call otra vez con otro id
+    * def llamado = call read('classpath:features/helpers/get-producto.feature') { id: 1 }
+    * match llamado.response.nombre == 'Teclado'
+```
+
+`call read('...') { id: 2 }` ejecuta el helper y le pasa `id`. `llamado.response` es el JSON que devolvió ese GET.
 
 ```bash
 mvn test -Dkarate.options="--tags @m05"
 ```
 
-**Por qué:** Dos escenarios, dos ids, un solo helper.
-
-**Resultado esperado:** verde. El helper **no** aparece como feature independiente en el summary (está `@ignore`).
-
-### 2 — Leer lo que devuelve call
-
-**Acción:** En el informe de *call pasa el id…* mira que hay un request interno a `/productos/2`.
-
-**Por qué:** `call` no es un import estático: **ejecuta** HTTP.
-
-**Resultado esperado:** `Monitor` en el response anidado.
+**Resultado esperado:** 2 verdes. El helper no sale como feature independiente en el summary.
 
 ### 3 — Helper de usuario
 
-**Acción:** Copia el patrón a `src/test/java/features/helpers/get-usuario.feature` (`@ignore`, `path 'usuarios', id`). En `call.feature` añade un Scenario que llame con `{ id: 1 }` y compruebe `nombre == 'Ana'`.
+**Acción:** Crea `src/test/java/features/helpers/get-usuario.feature` y pega esto:
 
-**Por qué:** El mismo mecanismo vale para cualquier recurso.
+```gherkin
+@ignore
+Feature: Helper — obtener un usuario por id
 
-**Resultado esperado:** `@m05` sigue verde con 3 escenarios.
+  Scenario:
+    Given url baseUrl
+    And path 'usuarios', id
+    When method get
+    Then status 200
+```
+
+En `call.feature`, pega este Scenario al final:
+
+```gherkin
+  Scenario: call de usuaria
+    * def llamado = call read('classpath:features/helpers/get-usuario.feature') { id: 1 }
+    * match llamado.response.nombre == 'Ana'
+```
+
+**Resultado esperado:** 3 verdes.
 
 ## Comprueba tu entendimiento
 
-**Config**
-
-Abre `karate-config.js`. ¿Qué pasaría si `callSingle` del mock fallara?
-
-→ Todos los features HTTP fallan al resolver `baseUrl`. El DSL de M02 también carga config, pero no usa `baseUrl`.
+Si `callSingle` del mock en `karate-config.js` fallara, todos los features HTTP se caen. M02 no usa `baseUrl`.
 
 ## Reto
 
-### 1 — call que espera 404
+### 1 — GET 404 reutilizado
 
-El helper actual hace `Then status 200`. ¿Cómo reutilizas un GET de producto inexistente?
-
-<details>
-<summary>Ver solución</summary>
-
-No uses ese helper. O bien un segundo helper sin aserción de status, o el GET en el propio Scenario:
+El helper de producto exige `status 200`. Para el 999 no lo uses. Pega este Scenario en `call.feature`:
 
 ```gherkin
-Given url baseUrl
-And path 'productos', 999
-When method get
-Then status 404
+  Scenario: producto que no existe, sin helper
+    Given url baseUrl
+    And path 'productos', 999
+    When method get
+    Then status 404
+    And match response.mensaje == 'Producto no encontrado'
 ```
-
-`call` es para el camino feliz que repites. Los 404 suelen ser explícitos.
-
-</details>
 
 ## Errores frecuentes
 
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
-| `id is not defined` en el helper | Lo corriste sin `call` / sin `@ignore` | Tag `@ignore` y llámalo con `{ id: n }` |
+| `id is not defined` | Helper sin `@ignore` / sin `call` | `@ignore` + `{ id: n }` |
 | `read` no encuentra el fichero | Path relativo mal | `classpath:features/helpers/get-producto.feature` |
-| El helper se cuenta como test fallido | Falta `@ignore` | Primera línea del helper: `@ignore` |

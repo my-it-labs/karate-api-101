@@ -2,11 +2,11 @@
 
 [← Página anterior](README.md) · [Siguiente página →](M03-02-post-put-patch-delete.md)
 
-> Práctica del módulo. La teoría y la demo están en el [README del módulo](README.md).
+> El concepto está en el [README del módulo](README.md). Aquí lo montas tú.
 
 ### Objetivo
 
-Lanzar GET contra la tienda usando `path` y `param`, y leer status 200 y 404.
+Vas a escribir GET contra la tienda con `path` y `param`, y cubrir 200 y 404.
 
 ### Prerrequisitos
 
@@ -14,78 +14,127 @@ Lanzar GET contra la tienda usando `path` y `param`, y leer status 200 y 404.
 
 ### En qué consiste
 
-Ejecutas `get.feature` y añades un GET de usuario.
+Vas a crear `features/m03/get.feature` y ir pegando escenarios.
 
-### 1 — Correr los GET
+### 1 — Listar productos
 
-**Acción:**
+**Acción:** Crea `src/test/java/features/m03/get.feature` y pega esto:
+
+```gherkin
+@m03 @http-get
+Feature: Peticiones GET contra la tienda
+
+  Background:
+    Given url baseUrl
+
+  Scenario: Listar todos los productos
+    And path 'productos'
+    When method get
+    Then status 200
+    And match response == '#[3]'
+    And match response[0].id == 1
+```
+
+`url baseUrl` sale de `karate-config.js`. `path 'productos'` (sin barra delante) pide el listado. `'#[3]'` exige 3 elementos.
 
 ```bash
 mvn test -Dkarate.options="--tags @http-get"
 ```
 
-**Por qué:** El tag `@http-get` aísla `get.feature` sin mezclar POST.
+**Resultado esperado:** 1 escenario verde.
 
-**Resultado esperado:** 4 escenarios verdes (listado, path, filtro, 404).
+### 2 — Path y query
 
-### 2 — Inspeccionar un request
-
-**Acción:** Abre el informe HTML del run y entra en *Obtener un producto por path*.
-
-**Por qué:** Ahí ves la URL final (`.../productos/2`) y el JSON de Monitor.
-
-**Resultado esperado:** `nombre` = `Monitor`, `categoria` = `pantalla`.
-
-### 3 — GET de usuario
-
-**Acción:** Al final de `get.feature` añade un Scenario que pida `usuarios/1` y compruebe que `nombre` es `Ana`.
-
-**Por qué:** El mock también expone `/usuarios/{id}`. Mismo patrón, otro recurso.
-
-**Resultado esperado:** al relanzar `@http-get`, 5 escenarios verdes.
+**Acción:** Debajo del Scenario anterior, pega estos dos:
 
 ```gherkin
-Scenario: Obtener una usuaria
-  And path 'usuarios', 1
-  When method get
-  Then status 200
-  And match response.nombre == 'Ana'
+  Scenario: Obtener un producto por path
+    And path 'productos', 2
+    When method get
+    Then status 200
+    And match response.nombre == 'Monitor'
+    And match response.categoria == 'pantalla'
+
+  Scenario: Filtrar por query param
+    And path 'productos'
+    And param categoria = 'periferico'
+    When method get
+    Then status 200
+    And match response == '#[2]'
+    And match each response contains { categoria: 'periferico' }
 ```
+
+`path 'productos', 2` arma `/productos/2`. `param categoria = 'periferico'` va a la query (`?categoria=periferico`) y tiene que ir **antes** de `method get`. `match each` recorre los dos resultados.
+
+**Resultado esperado:** 3 escenarios verdes.
+
+### 3 — 404
+
+**Acción:** Pega este Scenario al final:
+
+```gherkin
+  Scenario: Producto que no existe
+    And path 'productos', 999
+    When method get
+    Then status 404
+    And match response.mensaje == 'Producto no encontrado'
+```
+
+El 404 aquí es el resultado que esperas, no un fallo del test.
+
+**Resultado esperado:** 4 escenarios verdes. En el informe, el path 2 muestra el JSON del Monitor.
+
+### 4 — Usuario
+
+**Acción:** Pega este Scenario al final:
+
+```gherkin
+  Scenario: Usuaria por id
+    And path 'usuarios', 1
+    When method get
+    Then status 200
+    And match response.nombre == 'Ana'
+```
+
+**Resultado esperado:** 5 escenarios verdes.
 
 ## Comprueba tu entendimiento
 
 **404 de usuario**
 
-GET a `usuarios/9`
+Pega este Scenario, lánzalo y déjalo:
 
-→ `404` y `response.mensaje == 'Usuario no encontrado'`.
+```gherkin
+  Scenario: Usuario que no existe
+    And path 'usuarios', 9
+    When method get
+    Then status 404
+    And match response.mensaje == 'Usuario no encontrado'
+```
 
 ## Reto
 
-### 1 — Filtro que no existe
+### 1 — Filtro vacío
 
-Añade un Scenario que liste productos con `param categoria = 'audio'`.
-
-<details>
-<summary>Ver solución</summary>
-
-El mock filtra la lista; no hay categoría `audio`, así que `response == '#[0]'` y status 200 (lista vacía, no 404).
+Pega este Scenario:
 
 ```gherkin
-Scenario: Categoria sin productos
-  And path 'productos'
-  And param categoria = 'audio'
-  When method get
-  Then status 200
-  And match response == '#[0]'
+  Scenario: Categoria que no existe
+    And path 'productos'
+    And param categoria = 'audio'
+    When method get
+    Then status 200
+    And match response == '#[0]'
 ```
 
-</details>
+`'#[0]'` es una lista vacía. El mock filtra; no hay categoría `audio`, y responde 200, no 404.
+
+**Resultado esperado:** el Scenario queda verde.
 
 ## Errores frecuentes
 
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
-| `404 Ruta no mockeada` | `path '/productos'` con barra | `path 'productos'` |
-| Connection refused | Estás usando un host escrito a mano | Deja `url baseUrl` |
-| El filtro devuelve 3 productos | El param no se envió | `And param categoria = 'periferico'` **antes** de `method get` |
+| `404 Ruta no mockeada` | `path '/productos'` | `path 'productos'` |
+| Connection refused | Host escrito a mano | `url baseUrl` |
+| El filtro devuelve 3 | El param va después del GET | `param` antes de `method get` |

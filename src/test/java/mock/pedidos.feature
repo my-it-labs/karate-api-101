@@ -14,8 +14,8 @@ Feature: Mock mínimo de pedidos
       """
 
   Scenario: pathMatches('/pedidos') && methodIs('post')
-    * def responseStatus = 201
-    * def response = { id: '88', estado: 'creado' }
+    * def responseStatus = request.cantidad ? 201 : 400
+    * def response = responseStatus == 201 ? { id: '88', estado: 'creado' } : { mensaje: 'cantidad obligatoria' }
 
   Scenario:
     * def responseStatus = 404

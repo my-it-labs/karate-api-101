@@ -3,43 +3,38 @@
 [← Página anterior](../M03-peticiones-http/M03-02-post-put-patch-delete.md) · [Siguiente página →](M04-01-match-y-esquema.md)
 
 > [!NOTE]
-> **Cómo funciona este módulo.** Primero la **teoría**, luego la **demostración guiada** del formador, y después **practicas tú** en los laboratorios.
+> Primero ves cómo `match` describe la **forma** del JSON. En el laboratorio lo escribes tú sobre productos y listas.
 
-## Qué aprenderás
+## Qué vas a hacer
 
-- `match` de igualdad, `contains` y marcadores `#string` / `#number`.
-- Esquemas de objeto y `match each` sobre listas.
-- JSONPath corto: `response[*].id`.
+- Combinar igualdad, `contains` y marcadores `#string` / `#number`.
+- Validar un objeto entero y cada elemento de una lista (`match each`).
+- Usar JSONPath corto: `response[*].id`.
 
-## Teoría
+## `match` con forma, no solo un campo
 
-Hasta ahora el `match` comprobaba un campo. En APIs reales no quieres listar todos los valores literales: quieres la **forma**.
+Hasta ahora comprobabas un valor. En una API real te interesa el **contrato**: tipos y claves.
 
-| Expresión | Significado |
-|-----------|-------------|
+| Expresión | Qué compruebas |
+|-----------|----------------|
 | `match response.nombre == 'Teclado'` | Valor exacto |
-| `match response contains { id: 1 }` | Subconjunto de campos |
+| `match response contains { id: 1 }` | Un subconjunto de campos |
 | `match response == { id: '#number', nombre: '#string', ... }` | Esquema del objeto |
-| `match each response == { ... }` | El mismo esquema para **cada** elemento de la lista |
+| `match each response == { ... }` | El mismo esquema en **cada** elemento |
 | `match response == '#[3]'` | Array de longitud 3 |
-| `match response[*].id contains 2` | JSONPath: la lista de ids incluye 2 |
+| `match response[*].id contains 2` | En la lista de ids aparece 2 |
 
-> [!NOTE]
-> `contains` no exige que el objeto tenga *solo* esos campos. El esquema con `== { ... }` sí exige **exactamente** esas claves (salvo que uses `#ignore` / `##...` para opcionales; en 101 no hace falta).
+`contains` ignora el resto de claves. El esquema con `== { ... }` exige **exactamente** esas claves.
 
-## Demostración guiada
+## Cómo encaja
 
-> Recorrido que hace el formador en vivo. Tono descriptivo, sin imperativos.
+Un GET a `/productos/1` en el Background te dejará el Teclado. Sobre esa respuesta harás igualdad, `contains` y el esquema de cinco campos. Sobre el listado, `match each` y `response[*].categoria`.
 
-1. `features/m04/match.feature` reutiliza el GET `/productos/1` en el Background. Los Scenarios solo asertan.
-2. El esquema del producto lista cinco campos. Si el mock añadiera `color`, este match rompería: es deliberado.
-3. `listas.feature` pide el catálogo y aplica `match each`. `response[*].categoria contains 'pantalla'` localiza el Monitor sin un `for`.
+## Ahora te toca a ti
 
-## Ahora practica tú
-
-| Lab | Título | Qué harás |
-|-----|--------|-----------|
-| M04-01 | [match y esquema](M04-01-match-y-esquema.md) | Esquema de un producto y de un usuario |
-| M04-02 | [Listas y JSONPath](M04-02-listas-jsonpath.md) | `match each` y un path |
+| Lab | Título | Qué vas a montar |
+|-----|--------|------------------|
+| M04-01 | [match y esquema](M04-01-match-y-esquema.md) | `match.feature` |
+| M04-02 | [Listas y JSONPath](M04-02-listas-jsonpath.md) | `listas.feature` |
 
 → Empieza por **[M04-01 — match y esquema](M04-01-match-y-esquema.md)**.

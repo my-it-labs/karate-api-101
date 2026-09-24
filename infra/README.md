@@ -1,56 +1,48 @@
 # Infraestructura de laboratorio
 
-Proyecto **Maven + Java 17 + Karate 1.4.1**. Los tests viven en `src/test/java/features/`. Un mock HTTP de tienda arranca solo al ejecutar Karate (`src/test/java/mock/`).
+En el Codespace tienes **JDK 17** y **Maven 3.9**. Karate no está instalado todavía: lo bajarás cuando escribas el `pom.xml` (M01-01). El mock de tienda sí está: `src/test/java/mock/`.
 
-## Arranque (Codespace)
+## Arranque
 
-1. Haz **fork** de este repo a tu cuenta.
-2. En **tu fork**: **Code → Codespaces → Create codespace on main**.
-3. Espera a que termine el `postCreate` (descarga dependencias Maven).
-4. En la terminal:
+1. Haz fork de este repo.
+2. En **tu fork**: **Code → Codespaces → Create codespace on `main`**.
+3. Cuando arranque, comprueba que Java y Maven responden:
 
 ```bash
 java -version
 mvn -version
-mvn test -Dkarate.options="--tags @smoke"
+ls pom.xml   # todavía no existe: lo creas en M01-01
 ```
 
-## Comandos útiles
+## Cuando ya tengas pom y runner
 
-| Qué | Comando |
-|-----|---------|
-| Humo | `mvn test -Dkarate.options="--tags @smoke"` |
+| Qué quieres | Comando |
+|-------------|---------|
+| Todo lo que hayas escrito | `mvn test` |
+| Solo el humo | `mvn test -Dkarate.options="--tags @smoke"` |
 | Un módulo | `mvn test -Dkarate.options="--tags @m03"` |
-| Todo | `mvn test` |
 | Un feature | `mvn test -Dkarate.options="classpath:features/m03/get.feature"` |
 
-Informe HTML: `target/karate-reports/karate-summary.html` (ábrelo con **Live Preview** en VS Code).
+El informe HTML queda en `target/karate-reports/karate-summary.html`. Ábrelo con Live Preview.
+
+El **Run** que aparece encima del Feature es la extensión de Karate Labs (**IDE Plus**, de pago). El framework que usas con Maven es gratis. Detalle: [extension-karate.md](extension-karate.md).
+
+Si contrastas con un proyecto ya cerrado, está en la rama [`example`](https://github.com/my-it-labs/karate-api-101/tree/example).
 
 ## Puertos
 
-Karate no abre una aplicación de escritorio.
+No vas a abrir una aplicación en el navegador. El mock de tienda escucha en `localhost` **dentro** del Codespace, en un puerto aleatorio. La pestaña **Ports** puede mostrar algo: no es un paso del lab.
 
-| Qué | Puerto | ¿Lo tienes que abrir en el navegador? |
-|-----|--------|----------------------------------------|
-| Mock de tienda (`karate.start`) | aleatorio, solo `localhost` dentro del Codespace | No. Los tests ya lo usan. |
-| Informe HTML | ningún servidor | No. Es un fichero; Live Preview basta. |
-| Mock de pedidos (M07) | aleatorio, igual que la tienda | No, salvo que quieras `curl` desde la terminal. |
-
-Si un proceso llega a escuchar un puerto, Codespaces lo muestra en la pestaña **Ports** y genera una URL `*.app.github.dev`. Para este curso **no es un paso del lab**: trabaja siempre contra `localhost` en la terminal del Codespace.
-
-## Árbol relevante
+## Qué hay al clonar `main`
 
 ```text
-src/test/java/
-  karate-config.js          # baseUrl del mock de tienda
-  mock/tienda.feature       # API local (productos, usuarios)
-  mock/start.js             # karate.start una vez por ejecución
-  mock/pedidos.feature      # mock ad hoc de M07
-  features/smoke.feature
-  features/m02 … m07/
-  runners/KarateTest.java
+.devcontainer/           # JDK 17 + Maven
+labs/                    # estos guiones
+src/test/java/mock/      # API de tienda (la enchufas en M01-02)
 ```
 
-## Local (sin Codespace)
+El `pom.xml`, el runner, `karate-config.js` y los `.feature` los creas tú.
 
-JDK 17 y Maven 3.9+. Luego los mismos `mvn test`. Importar como proyecto Maven en el IDE que uses.
+## Sin Codespace
+
+JDK 17 y Maven 3.9+ en tu máquina, y el mismo M01.

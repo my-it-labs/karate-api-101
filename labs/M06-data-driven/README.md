@@ -3,40 +3,35 @@
 [← Página anterior](../M05-reutilizacion/M05-01-call-y-config.md) · [Siguiente página →](M06-01-tablas-csv-json.md)
 
 > [!NOTE]
-> **Cómo funciona este módulo.** Primero la **teoría**, luego la **demostración guiada** del formador, y después **practicas tú** en el laboratorio.
+> Primero ves cómo un Outline recorre filas. En el laboratorio montas tú la tabla, el CSV y el JSON.
 
-## Qué aprenderás
+## Qué vas a hacer
 
-- `Scenario Outline` + `Examples`.
-- Cargar la tabla desde un CSV y desde un JSON.
+- Escribir un `Scenario Outline` con `Examples`.
+- Cargar las filas desde un CSV y desde un JSON.
 
-## Teoría
+## Una fila, un Scenario
 
-Un Outline es **un Scenario que se repite** por cada fila. `<id>` se sustituye antes de ejecutar.
+El Outline es el **mismo** Scenario repetido. `<id>` se sustituye antes de ejecutar.
 
-| Fuente | Dónde | Cuándo |
-|--------|-------|--------|
-| Tabla embebida | Bajo `Examples:` en el feature | Pocos casos, se leen en clase |
-| CSV | `Examples: \| read('productos.csv') \|` | Mismos campos, más filas |
-| JSON | `Examples: \| read('casos.json') \|` | Datos ya vienen como lista de objetos |
+| Fuente | Dónde lo pones |
+|--------|----------------|
+| Tabla embebida | Bajo `Examples:` en el feature |
+| CSV | `Examples: \| read('productos.csv') \|` |
+| JSON | `Examples: \| read('casos.json') \|` |
 
-Las columnas del CSV **tienen que coincidir** con los placeholders (`<id>`, `<nombre>`, `<precio>`).
+Las columnas tienen que llamarse como los placeholders. El CSV y el JSON van **junto** al feature.
 
-> [!WARNING]
-> El CSV va junto al feature (`features/m06/productos.csv`) y se lee con path **relativo** al feature, no con `classpath:` en este lab.
+Los números van **sin** comillas: `response.precio == <precio>`, no `'<precio>'`.
 
-## Demostración guiada
+## Cómo encaja
 
-> Recorrido que hace el formador en vivo. Tono descriptivo, sin imperativos.
+Un Outline embebido recorrerá los tres productos. Otro leerá `productos.csv` (precios) y `casos.json` (nombres). Si una fila falla, las demás pueden seguir verdes.
 
-1. `tabla.feature` recorre tres productos. En el informe aparecen tres filas, no un solo Scenario.
-2. `ficheros.feature` lee `productos.csv` y `casos.json`. El Outline de precios comprueba `response.precio == <precio>` (número, sin comillas).
-3. Un fallo en la fila 2 deja las otras en verde: se ve qué dato rompió.
+## Ahora te toca a ti
 
-## Ahora practica tú
-
-| Lab | Título | Qué harás |
-|-----|--------|-----------|
-| M06-01 | [Tablas, CSV y JSON](M06-01-tablas-csv-json.md) | Ejecutar outlines y añadir una fila |
+| Lab | Título | Qué vas a montar |
+|-----|--------|------------------|
+| M06-01 | [Tablas, CSV y JSON](M06-01-tablas-csv-json.md) | Outlines y ficheros de datos |
 
 → Empieza por **[M06-01 — Tablas, CSV y JSON](M06-01-tablas-csv-json.md)**.

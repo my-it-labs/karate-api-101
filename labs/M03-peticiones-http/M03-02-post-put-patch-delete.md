@@ -2,11 +2,11 @@
 
 [← Página anterior](M03-01-get-path-params.md) · [Siguiente página →](../M04-validaciones/README.md)
 
-> Práctica del módulo. La teoría y la demo están en el [README del módulo](README.md).
+> El concepto está en el [README del módulo](README.md). Aquí lo montas tú.
 
 ### Objetivo
 
-Enviar un cuerpo JSON y cubrir los cuatro verbos de escritura.
+Vas a escribir los cuatro verbos de escritura y comprobar que el mock **no persiste**.
 
 ### Prerrequisitos
 
@@ -14,77 +14,108 @@ Enviar un cuerpo JSON y cubrir los cuatro verbos de escritura.
 
 ### En qué consiste
 
-Ejecutas `write.feature` y observas que el mock **no persiste** (el POST no crea un GET posterior).
+Vas a crear `features/m03/write.feature`.
 
-### 1 — Correr los writes
+### 1 — POST
 
-**Acción:**
+**Acción:** Crea `src/test/java/features/m03/write.feature` y pega esto:
+
+```gherkin
+@m03 @http-write
+Feature: POST PUT PATCH DELETE contra la tienda
+
+  Background:
+    Given url baseUrl
+    And header Content-Type = 'application/json'
+
+  Scenario: Crear un producto
+    And path 'productos'
+    And request { nombre: 'Dock USB', precio: 60, categoria: 'periferico', stock: 5 }
+    When method post
+    Then status 201
+    And match response.id == 99
+    And match response.nombre == 'Dock USB'
+```
+
+`request { ... }` es el cuerpo JSON. El mock siempre responde `id` 99. Compruebas esa respuesta, no un GET posterior.
 
 ```bash
 mvn test -Dkarate.options="--tags @http-write"
 ```
 
-**Por qué:** Cuatro escenarios: POST 201, PUT 200, PATCH stock, DELETE 204.
+**Resultado esperado:** 1 verde.
 
-**Resultado esperado:** `failed: 0`.
+### 2 — PUT, PATCH, DELETE
 
-### 2 — Ver el cuerpo del POST
+**Acción:** Debajo del POST, pega estos tres Scenario:
 
-**Acción:** En el informe, abre *Crear un producto* y mira el request body y el response `id: 99`.
+```gherkin
+  Scenario: Reemplazar un producto
+    And path 'productos', 1
+    And request { nombre: 'Teclado mecanico', precio: 90, categoria: 'periferico', stock: 3 }
+    When method put
+    Then status 200
+    And match response.nombre == 'Teclado mecanico'
+    And match response.id == 1
 
-**Por qué:** El mock siempre asigna id 99. No es una base de datos.
+  Scenario: Actualizar solo el stock
+    And path 'productos', 3
+    And request { stock: 1 }
+    When method patch
+    Then status 200
+    And match response.stock == 1
+    And match response.id == 3
 
-**Resultado esperado:** el response copia `nombre` y `precio` del request.
+  Scenario: Borrar un producto
+    And path 'productos', 2
+    When method delete
+    Then status 204
+```
 
-### 3 — Comprobar que no persiste
+PUT manda el producto entero. PATCH manda solo `{ stock: 1 }`. DELETE en esta tienda responde **204**, sin cuerpo.
 
-**Acción:** No añadas todavía código. Lanza:
+**Resultado esperado:** 4 escenarios verdes.
+
+### 3 — El catálogo no cambió
+
+**Acción:** Sin tocar `write.feature`, lanza otra vez los GET:
 
 ```bash
 mvn test -Dkarate.options="--tags @http-get"
 ```
 
-y mira que `/productos` sigue teniendo **3** elementos.
+El mock recarga Teclado, Monitor y Webcam en cada petición. El POST no deja un cuarto producto.
 
-**Por qué:** Un error típico de este curso es esperar que el POST del mock se vea en el GET. El catálogo del mock se reinicia en cada petición (lista fija en el `Background` del mock).
-
-**Resultado esperado:** el listado sigue siendo Teclado, Monitor, Webcam.
+**Resultado esperado:** el listado sigue teniendo 3 productos.
 
 ## Comprueba tu entendimiento
 
 **Header**
 
-En el POST, quita la línea `And header Content-Type = 'application/json'` del Background y lanza `@http-write`.
+Quita del Background la línea `And header Content-Type = 'application/json'`, lanza `@http-write`, y vuélvela a poner.
 
-→ En este mock suele seguir funcionando porque Karate envía JSON igual. Vuelve a dejar el header: es el hábito correcto contra APIs reales.
+→ En este mock suele colar. En APIs reales, no.
 
 ## Reto
 
-### 1 — POST sin precio
+### 1 — POST sin `precio`
 
-Añade un Scenario que haga POST `{ nombre: 'Cable', categoria: 'periferico', stock: 20 }` **sin** `precio`, y decide qué asertas.
-
-<details>
-<summary>Ver solución</summary>
-
-El mock copia `body.precio` (quedará `null`). Un match razonable:
+Pega este Scenario:
 
 ```gherkin
-Scenario: POST sin precio
-  And path 'productos'
-  And request { nombre: 'Cable', categoria: 'periferico', stock: 20 }
-  When method post
-  Then status 201
-  And match response.nombre == 'Cable'
-  And match response.precio == '#null'
+  Scenario: Crear sin precio
+    And path 'productos'
+    And request { nombre: 'Cable', categoria: 'periferico', stock: 20 }
+    When method post
+    Then status 201
+    And match response.precio == '#null'
 ```
 
-</details>
+`'#null'` es el marcador de «este campo viene vacío». El cuerpo no trae `precio`, así que la respuesta tampoco.
 
 ## Errores frecuentes
 
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
-| `pathMatches POST` no entra | Olvidaste `method post` / usaste GET | `When method post` |
-| Esperabas 4 productos tras el POST | El mock no guarda estado | Asera el **response del POST**, no un GET posterior |
-| DELETE falla con 200 | Aserción `status 200` | Este mock responde **204** |
+| Esperabas 4 productos tras el POST | El mock no guarda estado | Asera el response del POST |
+| DELETE con 200 | Este mock responde 204 | `status 204` |

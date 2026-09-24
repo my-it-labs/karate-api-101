@@ -1,46 +1,46 @@
-# M01 — Entorno Codespace
+# M01 — Entorno y proyecto Maven
 
-[← Página anterior](../../README.md) · [Siguiente página →](M01-01-codespace-y-humo.md)
-
-> [!NOTE]
-> **Cómo funciona este módulo.** Primero la **teoría**, luego la **demostración guiada** del formador, y después **practicas tú** en el laboratorio.
-
-## Qué aprenderás
-
-- Fork del repo y Codespace como máquina de laboratorio.
-- Dónde viven los `.feature`, el `pom.xml` y el mock.
-- Cómo lanzar un test de humo y abrir el informe HTML.
-
-## Teoría
-
-Karate es un DSL sobre Gherkin (`Given` / `When` / `Then`) para probar APIs HTTP. En este curso **no usamos una VM ni Eclipse**. El laboratorio es un contenedor en GitHub Codespaces con JDK 17, Maven y las extensiones de VS Code.
-
-| Pieza | Rol |
-|-------|-----|
-| `pom.xml` | Dependencia `karate-junit5` 1.4.1 |
-| `src/test/java/features/` | Tus escenarios |
-| `src/test/java/mock/` | API de tienda local (`karate.start`) |
-| `karate-config.js` | Inyecta `baseUrl` hacia ese mock |
-| `target/karate-reports/` | Informe HTML después de `mvn test` |
+[← Página anterior](../../README.md) · [Siguiente página →](M01-01-proyecto-maven.md)
 
 > [!NOTE]
-> El mock **no es una app que abras en el navegador**. Karate lo levanta, los tests hablan con `localhost`, y se apaga al terminar. La pestaña Ports de Codespaces puede mostrar un puerto: ignóralo salvo que quieras hacer `curl` a mano.
+> Primero ves dónde vive Karate y cómo se arranca. En el laboratorio lo montas tú: pom, runner y el primer feature.
 
-Eclipse queda documentado en [infra/eclipse.md](../../infra/eclipse.md) por si tu empresa lo exige. El camino de clase es Codespace.
+## Qué vas a hacer
 
-## Demostración guiada
+- Abrir tu Codespace: ahí tienes JDK 17 y Maven.
+- Escribir el `pom.xml` por piezas e instalar `karate-junit5`.
+- Escribir el runner JUnit y un primer `.feature` hasta verlo verde.
+- Enchufar el mock de tienda con `karate-config.js` y hacer un GET de humo.
 
-> Recorrido que hace el formador en vivo. Tono descriptivo, sin imperativos.
+## Dónde vive Karate
 
-1. Al abrir el repo en GitHub aparece **Code → Codespaces**. El Codespace arranca VS Code en el navegador, en la raíz del proyecto.
-2. En la terminal, `java -version` muestra 17 y `mvn -version` responde. El `postCreate` ya descargó las dependencias.
-3. Un `mvn test -Dkarate.options="--tags @smoke"` ejecuta un único escenario GET contra el catálogo. En la salida aparece `Karate version` y `failed: 0`.
-4. En `target/karate-reports/karate-summary.html` el informe lista el feature de humo en verde. Live Preview lo abre dentro de VS Code: no hace falta publicar un puerto.
+En el Codespace encontrarás **JDK 17 y Maven**. Karate aún no está: el primer paso será declararlo en el `pom` (`karate-junit5`) y dejar que Maven descargue esa dependencia. Ahí verás dónde vive y cómo se pone en marcha: el runner JUnit llama a `Karate.run("classpath:features")` y Surefire ejecuta esa clase.
 
-## Ahora practica tú
+| Qué | Para qué lo vas a usar |
+|-----|------------------------|
+| JDK 17 + Maven (Codespace) | Compilar y bajar dependencias |
+| `mock/tienda.feature` | API local; la enchufas en M01-02 |
+| `pom.xml` | Declarar Karate 1.4.1 y cómo se copian los `.feature` |
+| `KarateTest.java` | El único Java del curso: lanza los features |
+| `features/*.feature` | Tus escenarios, módulo a módulo |
+| `karate-config.js` | `baseUrl` hacia el mock |
 
-| Lab | Título | Qué harás |
-|-----|--------|-----------|
-| M01-01 | [Codespace y humo](M01-01-codespace-y-humo.md) | Fork, Codespace, primer `mvn test` e informe |
+Karate busca los `.feature` en el classpath de test. En el pom tendrás que marcar `src/test/java` como `testResources` (excluyendo `*.java`). Si no, `mvn test` no los verá.
 
-→ Empieza por **[M01-01 — Codespace y humo](M01-01-codespace-y-humo.md)**.
+El mock no abre una ventana: cuando exista `karate-config.js`, Karate lo levanta en `localhost` y lo apaga al terminar.
+
+## Cómo encaja (recorrido)
+
+1. En el `pom` vas a fijar `karate.version` 1.4.1, la dependencia en scope `test`, los `testResources` y Surefire (para poder pasar `--tags`).
+2. El runner que escribas hará `Karate.run("classpath:features")`.
+3. Con `karate-config.js` arrancarás `mock/start.js` y tendrás `baseUrl`. Un GET a `/productos` te confirmará que la tienda responde.
+4. `mvn test` te dejará el informe en `target/karate-reports/`.
+
+## Ahora te toca a ti
+
+| Lab | Título | Qué vas a montar |
+|-----|--------|------------------|
+| M01-01 | [Proyecto Maven](M01-01-proyecto-maven.md) | pom por partes, runner, primer feature, `mvn test` |
+| M01-02 | [Config y humo](M01-02-config-y-humo.md) | `karate-config.js` + GET al mock |
+
+→ Empieza por **[M01-01 — Proyecto Maven](M01-01-proyecto-maven.md)**.
