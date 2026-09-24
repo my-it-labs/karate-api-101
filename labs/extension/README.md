@@ -12,5 +12,6 @@ El recorrido del curso acaba en M07. Lo de esta carpeta es **aparte**: lo haces 
 | E04 | [call con una lista](E04-call-tabla.md) | Un `call` con varios `id` |
 | E05 | [Usuarios y tags](E05-usuarios-y-tags.md) | Outline de `/usuarios` y tags combinados |
 | E06 | [El mock valida](E06-contrato-del-mock.md) | POST sin `cantidad` → 400 |
+| E07 | [Actions y Pages](E07-github-actions-pages.md) | `mvn test` en el fork y el informe publicado |
 
 → Empieza por **[E01 — Regex, assert y funciones](E01-expresiones.md)**.

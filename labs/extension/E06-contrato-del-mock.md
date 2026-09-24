@@ -1,6 +1,6 @@
 # E06 — El mock también valida
 
-[← Página anterior](E05-usuarios-y-tags.md) · [Siguiente página →](../../README.md)
+[← Página anterior](E05-usuarios-y-tags.md) · [Siguiente página →](E07-github-actions-pages.md)
 
 > Extensión del temario. El recorrido principal termina en M07. Esto es para cuando ya lo has cerrado.
 
