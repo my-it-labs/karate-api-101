@@ -18,12 +18,16 @@ Feature: Mock de la API de tienda (laboratorio local)
       ]
       """
 
-  Scenario: pathMatches('/productos') && methodIs('get') && !paramExists('categoria')
+  Scenario: pathMatches('/productos') && methodIs('get') && !paramExists('categoria') && !paramExists('precioMax')
     * def response = productos
 
   Scenario: pathMatches('/productos') && methodIs('get') && paramExists('categoria')
     * def cat = paramValue('categoria')
     * def response = karate.filter(productos, function(x){ return x.categoria == cat })
+
+  Scenario: pathMatches('/productos') && methodIs('get') && paramExists('precioMax')
+    * def max = parseInt(paramValue('precioMax'))
+    * def response = karate.filter(productos, function(x){ return x.precio <= max })
 
   Scenario: pathMatches('/productos/{id}') && methodIs('get')
     * def id = parseInt(pathParams.id)
@@ -72,6 +76,12 @@ Feature: Mock de la API de tienda (laboratorio local)
   Scenario: pathMatches('/eco') && methodIs('get')
     * def curso = requestHeaders['x-curso'] ? requestHeaders['x-curso'][0] : ''
     * def response = { eco: '#(curso)' }
+
+  Scenario: pathMatches('/usuarios') && methodIs('get')
+    * def response = usuarios
+
+  Scenario: pathMatches('/resumen') && methodIs('get')
+    * def response = { productos: 3, unidades: 22, perifericos: 2 }
 
   Scenario: pathMatches('/usuarios/{id}') && methodIs('get')
     * def id = parseInt(pathParams.id)

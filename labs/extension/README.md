@@ -14,4 +14,6 @@ El recorrido del curso acaba en M07. Lo de esta carpeta es **aparte**: lo haces 
 | E06 | [El mock valida](E06-contrato-del-mock.md) | POST sin `cantidad` → 400 |
 | E07 | [Actions y Pages](E07-github-actions-pages.md) | `mvn test` en el fork y el informe publicado |
 
+Cuando cierres la extensión, el paquete de casos está aparte: **[Casos de negocio](casos/README.md)**. Cada paso trae el código en **Ver solución**.
+
 → Empieza por **[E01 — Regex, assert y funciones](E01-expresiones.md)**.

@@ -1,6 +1,6 @@
 # E07 — GitHub Actions y el informe en Pages
 
-[← Página anterior](E06-contrato-del-mock.md) · [Siguiente página →](../../README.md)
+[← Página anterior](E06-contrato-del-mock.md) · [Siguiente página →](casos/README.md)
 
 > Extensión del temario. El recorrido principal termina en M07. Esto es para cuando ya lo has cerrado.
 

@@ -8,6 +8,7 @@ Abre el Codespace del curso desde `main` de **tu fork**, no desde esta rama.
 |-----|--------|
 | Features de cada módulo | `src/test/java/features/` |
 | Extensión del temario, ya resuelta | [`labs/extension/`](labs/extension/README.md) |
+| Casos de negocio, ya resueltos | [`labs/extension/casos/`](labs/extension/casos/README.md) |
 | Más escenarios para mirar | [`src/test/java/examples/`](src/test/java/examples/README.md) |
 | Tu espacio de trabajo | [`main`](https://github.com/my-it-labs/karate-api-101/tree/main) |
 
